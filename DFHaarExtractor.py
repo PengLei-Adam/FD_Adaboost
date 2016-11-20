@@ -3,7 +3,7 @@
 Haar feature extractor
 Created on Sun Nov 20 15:20:51 2016
 
-@author: leip
+@author: Peng Lei
 """
 
 def rectSum(interimg, x, y, width, height):
