@@ -13,14 +13,14 @@ import numpy as np
 import cv2
 
 class FDImage:
-    def __init__(self, img_path):
-        self.readFile(img_path)
+    def __init__(self, img):
+        if isinstance(img, basestring):
+            self.readFile(img)
+        elif isinstance(img, np.ndarray):
+            self.readData(img)
+        else:
+            print 'Error type for initiation'
     
-    def __init__(self, img_data, img_w, img_h, img_ch):
-        self.data = img_data
-        self.width = img_w
-        self.height = img_h
-        self.channels = img_ch
     
     def readFile(self, img_path):
         img = cv2.imread(img_path)
@@ -34,11 +34,28 @@ class FDImage:
             self.channels = 1
         elif img.ndim == 3:
             self.height, self.width, self.channels = img.shape
+    def readData(self, img):
+        self.data = img;
+        if img.ndim == 2:
+            self.height, self.width = img.shape
+            self.channels = 1
+        elif img.ndim == 3:
+            self.height, self.width, self.channels = img.shape
             
     def cvtIntegral(self):
         integral = np.zeros((self.height, self.width))
         imgGray = self.cvtGray()
+        s = 0
+        for i in range(self.width):
+            s += imgGray[0, i]
+            integral[0, i] = s
+        for j in range(1, self.height):
+            s = 0
+            for i in range(self.width):
+                s += imgGray[j, i]
+                integral[j, i] = integral[j - 1, i] + s
         
+        return integral
         
     def cvtGray(self):
         if self.channels == 1:
